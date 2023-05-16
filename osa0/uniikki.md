@@ -1,0 +1,4 @@
+```mermaid
+sequencediagram
+  participant server
+```
