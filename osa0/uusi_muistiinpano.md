@@ -1,5 +1,5 @@
 sequencediagram
-	participant browser
-	participant server
+  participant browser
+  participant server
 	
-	browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+  browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
