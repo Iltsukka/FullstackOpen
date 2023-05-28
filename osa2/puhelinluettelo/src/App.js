@@ -1,9 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import personService from './services/persons'
 
 const DisplayName = ({person}) => {
   
   return(
-    <li>{person.name} {person.number}</li>
+    <li>{person.name} {person.number} <button onClick={()=> {
+      if (window.confirm('Are you sure?')){
+        console.log('hello')
+        
+      }
+    }}>delete</button></li>
   )
 
 }
@@ -51,15 +57,20 @@ const FilterByName = ({filtered, handleFilteredChange}) => {
 
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '0100100'},
-    { name: 'John Stones', number: '123456'},
-    { name: 'Harry Potter', number: '148904'}
-  ]) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filtered, setFiltered] = useState('')
   const [showAll, setShowAll] =useState(true)
+
+  useEffect(() => {
+    personService
+      .getAll()
+      .then(response => {
+        setPersons(response)
+      })
+  },[])
+
   
   const personsToShow = showAll
     ? persons
@@ -75,18 +86,24 @@ const App = () => {
     }
 
     if (persons.some(person => person.number === newNumber)) {
-      alert(`${newNumber} is already added to phonebook`)
+      alert(`Number ${newNumber} is already added to phonebook`)
       return
     }
     const personObject = {
       name: newName,
       number: newNumber
     } 
-    setPersons(persons.concat(personObject))
-    setNewName('')
-    setNewNumber('')
-    setFiltered('')
-    setShowAll(true)
+    personService
+      .create(personObject)
+      .then(response => {
+        setPersons(persons.concat(response))
+        setNewName('')
+        setNewNumber('')
+        setFiltered('')
+        setShowAll(true)
+      })
+    
+    
     
     
   }
