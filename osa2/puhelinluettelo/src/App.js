@@ -28,6 +28,7 @@ const FormAddNew = ({addNote, handleNameChange, handleNumberChange, newName,newN
   return(
   <div>
     <h2>Add a new</h2>
+    
       <form onSubmit={addNote}>
         <div>
           name: <input value={newName} onChange={handleNameChange}/>
@@ -51,6 +52,30 @@ const FilterByName = ({filtered, handleFilteredChange}) => {
   )
 }
 
+const Notification = ({message})=> {
+  if (message===null) {
+    return null
+  }
+  
+  return (
+    <div className='notification'>
+      {message}
+    </div>
+  )
+}
+
+const ErrorNotification = ({message})=> {
+  if (message===null) {
+    return null
+  }
+  
+  return (
+    <div className='errorNotification'>
+      {message}
+    </div>
+  )
+}
+
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -58,6 +83,9 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filtered, setFiltered] = useState('')
   const [showAll, setShowAll] =useState(true)
+  const [notification, setNotification]=useState(null)
+  const [errorNotify, setErrorNotify]=useState(null)
+  
 
   useEffect(() => {
     personService
@@ -83,7 +111,6 @@ const App = () => {
 
     if (persons.some(person => person.name === newName)) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
-        console.log('updating')
         const personToUpdate = persons.find(person=>person.name===newName)
         const url = `http://localhost:3001/persons/${personToUpdate.id}`
         const changedNumber = {...personToUpdate, number: newNumber}
@@ -91,14 +118,25 @@ const App = () => {
         personService
           .update(url, changedNumber)
           .then(response => {
-            console.log(response)
             setPersons(persons.map(person=> person.name !== newName ? person : response.data))
+            setNotification(`${personToUpdate.name} was updated`)
+            setTimeout(() => {
+              setNotification(null)
+            }, 5000);
+            setNewName('')
+            setNewNumber('')
           })
-        console.log(personToUpdate)
+          .catch(error=> {
+            setErrorNotify(`${personToUpdate.name} has already been removed from server`)
+            setTimeout(() => {
+              setErrorNotify(null)
+              
+            }, 5000);
+            
+          })
         return
 
       } else {
-        console.log('cancelling')
         return
       }
     }
@@ -116,6 +154,11 @@ const App = () => {
         setNewNumber('')
         setFiltered('')
         setShowAll(true)
+        setNotification(`${response.name} was added`)
+        setTimeout(() => {
+          setNotification(null)
+          
+        }, 5000);
       })
     
     
@@ -141,11 +184,14 @@ const App = () => {
     const url = `http://localhost:3001/persons/${id}`
     
     if (window.confirm(`Delete ${name}?`)) {
-    console.log('this is my id ' + id)
     personService
       .remove(url)
       .then(response => {
         setPersons(persons.filter(person=> person.id !== id))
+        setNotification(`${name} was deleted`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000);
       })
     
     }
@@ -153,7 +199,11 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification}/>
+      <ErrorNotification message={errorNotify} />
+      
       <FilterByName filtered={filtered} handleFilteredChange={handleFilteredChange} />
+      
       <FormAddNew addNote={addNote} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} newName={newName} newNumber={newNumber}/>
       <RenderList personsToShow={personsToShow} deleteContact={deleteContact}/>
       
