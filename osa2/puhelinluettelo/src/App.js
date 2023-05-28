@@ -1,26 +1,22 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
 
-const DisplayName = ({person}) => {
+
+const DisplayName = ({person, deleteContact}) => {
   
   return(
-    <li>{person.name} {person.number} <button onClick={()=> {
-      if (window.confirm('Are you sure?')){
-        console.log('hello')
-        
-      }
-    }}>delete</button></li>
+    <li>{person.name} {person.number} <button onClick={deleteContact}>delete</button></li>
   )
 
 }
 
-const RenderList = ({personsToShow}) => {
+const RenderList = ({personsToShow, deleteContact}) => {
   return(
     <div>
       <h2>Numbers</h2>
      <ul>
       {personsToShow.map(person =>
-      <DisplayName key={person.number} person={person} />
+      <DisplayName key={person.number} person={person} deleteContact={()=>deleteContact(person.id,person.name)}/>
       )}
       </ul>
     </div>
@@ -119,17 +115,28 @@ const App = () => {
 
   const handleFilteredChange = (event) => {
     setFiltered(event.target.value)    
-    setShowAll(false)
-    
+    setShowAll(false)    
+  }
 
+  const deleteContact = (id, name) => {
+    const url = `http://localhost:3001/persons/${id}`
     
+    if (window.confirm(`Delete ${name}?`)) {
+    console.log('this is my id ' + id)
+    personService
+      .remove(url)
+      .then(response => {
+        setPersons(persons.filter(person=> person.id !== id))
+      })
+    
+    }
   }
   return (
     <div>
       <h2>Phonebook</h2>
       <FilterByName filtered={filtered} handleFilteredChange={handleFilteredChange} />
       <FormAddNew addNote={addNote} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} newName={newName} newNumber={newNumber}/>
-      <RenderList personsToShow={personsToShow}/>
+      <RenderList personsToShow={personsToShow} deleteContact={deleteContact}/>
       
     </div>
   )
