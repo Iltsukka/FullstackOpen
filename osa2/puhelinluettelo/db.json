@@ -2,7 +2,7 @@
   "persons": [
     {
       "name": "Arto Hellas",
-      "number": "040-123456",
+      "number": "044-1235662",
       "id": 1
     },
     {
@@ -12,7 +12,7 @@
     },
     {
       "name": "Dan Abramov",
-      "number": "12-43-234345",
+      "number": "12-434-2556777",
       "id": 3
     },
     {
@@ -21,8 +21,8 @@
       "id": 4
     },
     {
-      "name": "Kauko Seppä",
-      "number": "040-123789",
+      "name": "Chiresa Donn",
+      "number": "343-222-666",
       "id": 5
     }
   ]

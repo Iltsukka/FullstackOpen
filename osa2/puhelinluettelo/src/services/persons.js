@@ -16,10 +16,15 @@ const remove = (url) => {
 
 }
 
+const update = (url, newNumber) => {
+    return axios.put(url, newNumber)
+}
+
 const exportedObject = {
     getAll: getAll,
     create: create,
-    remove: remove
+    remove: remove,
+    update: update
 }
 
 export default exportedObject

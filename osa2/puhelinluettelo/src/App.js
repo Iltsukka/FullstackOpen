@@ -16,7 +16,7 @@ const RenderList = ({personsToShow, deleteContact}) => {
       <h2>Numbers</h2>
      <ul>
       {personsToShow.map(person =>
-      <DisplayName key={person.number} person={person} deleteContact={()=>deleteContact(person.id,person.name)}/>
+      <DisplayName key={person.name} person={person} deleteContact={()=>deleteContact(person.id,person.name)}/>
       )}
       </ul>
     </div>
@@ -81,10 +81,29 @@ const App = () => {
       return
     }
 
-    if (persons.some(person => person.number === newNumber)) {
-      alert(`Number ${newNumber} is already added to phonebook`)
-      return
+    if (persons.some(person => person.name === newName)) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        console.log('updating')
+        const personToUpdate = persons.find(person=>person.name===newName)
+        const url = `http://localhost:3001/persons/${personToUpdate.id}`
+        const changedNumber = {...personToUpdate, number: newNumber}
+
+        personService
+          .update(url, changedNumber)
+          .then(response => {
+            console.log(response)
+            setPersons(persons.map(person=> person.name !== newName ? person : response.data))
+          })
+        console.log(personToUpdate)
+        return
+
+      } else {
+        console.log('cancelling')
+        return
+      }
     }
+
+    
     const personObject = {
       name: newName,
       number: newNumber
