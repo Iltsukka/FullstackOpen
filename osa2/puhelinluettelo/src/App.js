@@ -181,7 +181,7 @@ const App = () => {
   }
 
   const deleteContact = (id, name) => {
-    const url = `http://localhost:3001/persons/${id}`
+    const url = `/api/persons/${id}`
     
     if (window.confirm(`Delete ${name}?`)) {
     personService
