@@ -112,7 +112,7 @@ const App = () => {
     if (persons.some(person => person.name === newName)) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         const personToUpdate = persons.find(person=>person.name===newName)
-        const url = `http://localhost:3001/persons/${personToUpdate.id}`
+        const url = `api/persons/${personToUpdate.id}`
         const changedNumber = {...personToUpdate, number: newNumber}
 
         personService
